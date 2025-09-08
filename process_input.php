@@ -1,0 +1,47 @@
+<?php
+include_once '/var/www/includes/db_config.php';
+$output = "";
+$output_message = "";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = isset($_POST['name_input']) ? $_POST['name_input'] : '';
+    if (!empty($name)) {
+        $user_ip = $_SERVER['REMOTE_ADDR'];
+        $message = htmlspecialchars($name) . '님 안녕하세요!';
+        $output = "<p class=\"text-lg font-medium text-gray-700\">${message}</p>";
+
+        $stmt = $conn->prepare("INSERT INTO users (name, ip_address) VALUES (?, ?)");
+        $stmt->bind_param("ss", $name, $user_ip);
+
+        if ($stmt->execute()) {
+            $output_message = "<p class=\"text-sm text-green-500 mt-2\">데이터가 성공적으로 저장되었습니다.</p>";
+        } else {
+            $output_message = "<p class=\"text-sm text-red-500 mt-2\">데이터 저장 중 오류 발생: " . $stmt->error . "</p>";
+        }
+        $stmt->close();
+    } else {
+        $output_message = "<p class=\"text-sm text-red-500 mt-2\">이름을 입력해주세요.</p>";
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이름 입력 및 저장</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">이름 입력</h1>
+        <form action="process_input.php" method="post">
+            <input type="text" name="name_input" placeholder="이름을 입력하세요" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+            <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-2 px-6 rounded-md shadow-md hover:bg-blue-600 transition duration-300">
+                클릭
+            </button>
+        </form>
+        <?php echo $output; ?>
+        <?php echo $output_message; ?>
+    </div>
+</body>
+</html>
