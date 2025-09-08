@@ -7,7 +7,14 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl text-center">
+    <!-- 'relative' 클래스를 추가하여 버튼을 이 컨테이너 내부에 위치시킵니다 -->
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl text-center relative">
+        
+        <!-- '처음으로 돌아가기' 버튼 추가 -->
+        <a href="/" class="absolute top-4 left-4 bg-gray-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-gray-600 transition duration-300 text-sm">
+            &larr; 처음으로
+        </a>
+
         <h1 class="text-3xl font-bold text-gray-800 mb-6">이름 입력</h1>
         <form action="process_input.php" method="post">
             <input type="text" name="name_input" placeholder="이름을 입력하세요" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
