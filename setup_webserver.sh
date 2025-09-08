@@ -5,6 +5,9 @@ MYSQL_USER=$1
 MYSQL_PASS=$2
 BASE_URL=$3
 
+# === 시간대 설정 명령어 추가 (KST) ===
+timedatectl set-timezone 'Asia/Seoul'
+
 # 패키지 업데이트 및 필수 패키지 설치
 apt-get update
 apt-get install -y apache2 php libapache2-mod-php mysql-server python3
@@ -47,4 +50,5 @@ if (\$conn->connect_error) {
     die("데이터베이스 연결 실패: " . \$conn->connect_error);
 }
 ?>
+
 EOF
