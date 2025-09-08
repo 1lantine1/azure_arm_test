@@ -10,7 +10,7 @@ timedatectl set-timezone 'Asia/Seoul'
 
 # 패키지 업데이트 및 필수 패키지 설치
 apt-get update
-apt-get install -y apache2 php libapache2-mod-php mysql-server python3
+apt-get install -y apache2 php libapache2-mod-php mysql-server python3 php-mysql
 
 # 아파치 모듈 활성화 및 재시작
 a2enconf php7.4-fpm
@@ -52,3 +52,4 @@ if (\$conn->connect_error) {
 ?>
 
 EOF
+
