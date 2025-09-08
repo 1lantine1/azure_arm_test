@@ -7,21 +7,70 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
-    <!-- 'relative' 클래스를 추가하여 버튼을 이 컨테이너 내부에 위치시킵니다 -->
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl text-center relative">
         
-        <!-- '처음으로 돌아가기' 버튼 추가 -->
         <a href="/" class="absolute top-4 left-4 bg-gray-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-gray-600 transition duration-300 text-sm">
             &larr; 처음으로
         </a>
 
         <h1 class="text-3xl font-bold text-gray-800 mb-6">이름 입력</h1>
-        <form action="process_input.php" method="post">
+        
+        <!-- form에 id="input-form" 추가 -->
+        <form id="input-form" method="post">
             <input type="text" name="name_input" placeholder="이름을 입력하세요" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
             <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-2 px-6 rounded-md shadow-md hover:bg-blue-600 transition duration-300">
                 클릭
             </button>
         </form>
+
+        <!-- 서버로부터 받은 결과를 표시할 영역 -->
+        <div id="result-container" class="mt-6 text-left">
+            <!-- 결과 메시지가 여기에 표시됩니다 -->
+        </div>
     </div>
+
+    <script>
+        // form 요소를 id로 선택
+        const form = document.getElementById('input-form');
+        const resultContainer = document.getElementById('result-container');
+
+        // form의 'submit' 이벤트가 발생했을 때 실행할 함수 등록
+        form.addEventListener('submit', function(event) {
+            // 1. form의 기본 동작(페이지 이동)을 막음
+            event.preventDefault(); 
+
+            // 2. form에 입력된 데이터를 가져옴
+            const formData = new FormData(form);
+
+            // 3. fetch API를 사용해 데이터를 백그라운드에서 서버로 전송
+            fetch('process_input.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json()) // 4. 서버의 응답을 JSON 형태로 파싱
+            .then(data => {
+                // 5. 응답 결과를 화면에 표시
+                let messageHtml = '';
+                
+                // 환영 메시지
+                if (data.message) {
+                    messageHtml += `<p class="text-lg font-medium text-gray-700">${data.message}</p>`;
+                }
+                
+                // 데이터 저장 상태 메시지 (성공 또는 실패)
+                if (data.statusMessage) {
+                    const messageColor = data.success ? 'text-green-500' : 'text-red-500';
+                    messageHtml += `<p class="text-sm ${messageColor} mt-2">${data.statusMessage}</p>`;
+                }
+
+                resultContainer.innerHTML = messageHtml;
+            })
+            .catch(error => {
+                // 통신 중 에러가 발생한 경우
+                console.error('Error:', error);
+                resultContainer.innerHTML = `<p class="text-sm text-red-500 mt-2">요청 처리 중 오류가 발생했습니다.</p>`;
+            });
+        });
+    </script>
 </body>
 </html>
