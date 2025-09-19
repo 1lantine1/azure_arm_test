@@ -15,12 +15,16 @@ if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
   exit 1
 fi
 
-# 1. 웹서버(Apache), PHP, MySQL 설치 및 설정
-echo "패키지 목록 업데이트 중..."
-apt-get update
-
-echo "Apache, PHP, MySQL 서버 설치 중..."
-apt-get install -y apache2 php libapache2-mod-php php-mysql mysql-server
+# --- 1. Install Packages ---
+echo "Updating packages and installing Apache, PHP, MySQL..."
+export DEBIAN_FRONTEND=noninteractive
+apt-get update && apt-get install -y \
+  apache2 \
+  php \
+  libapache2-mod-php \
+  php-mysql \
+  mysql-server \
+  curl
 
 # 2. 서비스 시작 및 부팅 시 자동 시작 설정
 echo "Apache 및 MySQL 서비스 시작 및 활성화 중..."
@@ -516,3 +520,4 @@ EOF
 
 
 echo "웹 서버 설치 및 게임 설정이 완료되었습니다."
+
