@@ -16,14 +16,19 @@ if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
 fi
 
 # --- 1. Install Packages ---
+echo "Waiting for apt/dpkg locks to be released..."
+# Loop until the dpkg lock files are free
+while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 ; do
+   echo "Another process is using apt, waiting 10 seconds..."
+   sleep 10
+done
+
 echo "Force cleaning apt state and updating packages..."
 export DEBIAN_FRONTEND=noninteractive
-
-# Clean up any potentially corrupted list files from previous runs
+# Clean up any potentially corrupted list files
 sudo rm -rf /var/lib/apt/lists/*
 sudo apt-get clean
-
-# Run a robust update, fixing any missing lists
+# Run a robust update
 sudo apt-get update -y --fix-missing
 
 echo "Installing Apache, PHP, MySQL..."
@@ -35,7 +40,7 @@ sudo apt-get install -y \
   php-mysql \
   mysql-server \
   curl
-
+  
 # 2. 서비스 시작 및 부팅 시 자동 시작 설정
 echo "Apache 및 MySQL 서비스 시작 및 활성화 중..."
 systemctl start apache2
@@ -530,5 +535,6 @@ EOF
 
 
 echo "웹 서버 설치 및 게임 설정이 완료되었습니다."
+
 
 
