@@ -16,9 +16,19 @@ if [ -z "$MYSQL_USER" ] || [ -z "$MYSQL_PASSWORD" ]; then
 fi
 
 # --- 1. Install Packages ---
-echo "Updating packages and installing Apache, PHP, MySQL..."
+echo "Force cleaning apt state and updating packages..."
 export DEBIAN_FRONTEND=noninteractive
-apt-get update && apt-get install -y \
+
+# Clean up any potentially corrupted list files from previous runs
+sudo rm -rf /var/lib/apt/lists/*
+sudo apt-get clean
+
+# Run a robust update, fixing any missing lists
+sudo apt-get update -y --fix-missing
+
+echo "Installing Apache, PHP, MySQL..."
+# Now, run the installation
+sudo apt-get install -y \
   apache2 \
   php \
   libapache2-mod-php \
@@ -520,4 +530,5 @@ EOF
 
 
 echo "웹 서버 설치 및 게임 설정이 완료되었습니다."
+
 
