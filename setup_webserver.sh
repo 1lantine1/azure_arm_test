@@ -514,4 +514,5 @@ echo json_encode(\$data);
 ?>
 EOF
 
+
 echo "웹 서버 설치 및 게임 설정이 완료되었습니다."
